@@ -14,7 +14,7 @@ import java.util.Map;
  */
 @Data
 @ConfigurationProperties(prefix = "sharding.sphere")
-public class ShardingDataSourceConfig {
+public class ShardingSphereConfig {
 	private Map<String, DruidDataSource> dataSources = new HashMap<>();
 	private String shardingRuleConfigLocation;
 	private String mapperLocation;

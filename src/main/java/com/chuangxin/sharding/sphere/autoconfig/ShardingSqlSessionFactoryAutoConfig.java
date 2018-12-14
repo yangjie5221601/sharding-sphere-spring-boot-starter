@@ -1,6 +1,6 @@
 package com.chuangxin.sharding.sphere.autoconfig;
 
-import com.chuangxin.sharding.sphere.config.ShardingDataSourceConfig;
+import com.chuangxin.sharding.sphere.config.ShardingSphereConfig;
 import com.google.common.collect.Maps;
 import io.shardingsphere.shardingjdbc.api.yaml.YamlShardingDataSourceFactory;
 import lombok.extern.log4j.Log4j2;
@@ -31,20 +31,20 @@ import java.util.Map;
  * @Date: 2018/12/13 上午11:13
  */
 @Configuration
-@EnableConfigurationProperties({ShardingDataSourceConfig.class})
+@EnableConfigurationProperties({ShardingSphereConfig.class})
 @Log4j2
 @EnableTransactionManagement
 public class ShardingSqlSessionFactoryAutoConfig {
 	@Autowired
-	private ShardingDataSourceConfig shardingDataSourceConfig;
+	private ShardingSphereConfig shardingSphereConfig;
 
 	@Bean(name = "shardingDataSource")
 	@Primary
 	public DataSource dataSource() {
 		try {
 			Map<String, DataSource> dataSourceMap = Maps.newHashMap();
-			dataSourceMap.putAll(shardingDataSourceConfig.getDataSources());
-			return YamlShardingDataSourceFactory.createDataSource(dataSourceMap, ResourceUtils.getFile(shardingDataSourceConfig.getShardingRuleConfigLocation()));
+			dataSourceMap.putAll(shardingSphereConfig.getDataSources());
+			return YamlShardingDataSourceFactory.createDataSource(dataSourceMap, ResourceUtils.getFile(shardingSphereConfig.getShardingRuleConfigLocation()));
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -55,16 +55,16 @@ public class ShardingSqlSessionFactoryAutoConfig {
 	public SqlSessionFactory sqlSessionFactoryBean(@Qualifier(value = "shardingDataSource") DataSource shardingDataSource) {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setDataSource(shardingDataSource);
-		if (StringUtils.isNotBlank(shardingDataSourceConfig.getTypeAliasesPackage())) {
-			bean.setTypeAliasesPackage(shardingDataSourceConfig.getTypeAliasesPackage());
+		if (StringUtils.isNotBlank(shardingSphereConfig.getTypeAliasesPackage())) {
+			bean.setTypeAliasesPackage(shardingSphereConfig.getTypeAliasesPackage());
 		}
 		ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 		try {
-			if (StringUtils.isNotBlank(shardingDataSourceConfig.getConfigLocation())) {
-				bean.setConfigLocation(resolver.getResource(shardingDataSourceConfig.getConfigLocation()));
+			if (StringUtils.isNotBlank(shardingSphereConfig.getConfigLocation())) {
+				bean.setConfigLocation(resolver.getResource(shardingSphereConfig.getConfigLocation()));
 			}
-			if (StringUtils.isNotBlank(shardingDataSourceConfig.getMapperLocation())) {
-				bean.setMapperLocations(resolver.getResources(shardingDataSourceConfig.getMapperLocation()));
+			if (StringUtils.isNotBlank(shardingSphereConfig.getMapperLocation())) {
+				bean.setMapperLocations(resolver.getResources(shardingSphereConfig.getMapperLocation()));
 			}
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
