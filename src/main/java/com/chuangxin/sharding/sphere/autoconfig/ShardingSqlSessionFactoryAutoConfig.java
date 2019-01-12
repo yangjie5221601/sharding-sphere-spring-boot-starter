@@ -44,7 +44,8 @@ public class ShardingSqlSessionFactoryAutoConfig {
 		try {
 			Map<String, DataSource> dataSourceMap = Maps.newHashMap();
 			dataSourceMap.putAll(shardingSphereConfig.getDataSources());
-			return YamlShardingDataSourceFactory.createDataSource(dataSourceMap, ResourceUtils.getFile(shardingSphereConfig.getShardingRuleConfigLocation()));
+			return YamlShardingDataSourceFactory.createDataSource(dataSourceMap, ResourceUtils.getFile
+					(shardingSphereConfig.getShardingRuleConfigLocation()));
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -52,7 +53,8 @@ public class ShardingSqlSessionFactoryAutoConfig {
 	}
 
 	@Bean(name = "shardingSqlSessionFactory")
-	public SqlSessionFactory sqlSessionFactoryBean(@Qualifier(value = "shardingDataSource") DataSource shardingDataSource) {
+	public SqlSessionFactory sqlSessionFactoryBean(@Qualifier(value = "shardingDataSource") DataSource
+															   shardingDataSource) {
 		SqlSessionFactoryBean bean = new SqlSessionFactoryBean();
 		bean.setDataSource(shardingDataSource);
 		if (StringUtils.isNotBlank(shardingSphereConfig.getTypeAliasesPackage())) {
@@ -80,14 +82,16 @@ public class ShardingSqlSessionFactoryAutoConfig {
 
 	@Bean(name = "shardingSqlSessionTemplate")
 	@Primary
-	public SqlSessionTemplate sqlSessionTemplate(@Qualifier(value = "shardingSqlSessionFactory") SqlSessionFactory sqlSessionFactory) {
+	public SqlSessionTemplate sqlSessionTemplate(@Qualifier(value = "shardingSqlSessionFactory") SqlSessionFactory
+															 sqlSessionFactory) {
 		return new SqlSessionTemplate(sqlSessionFactory);
 	}
 
 
 	@Bean(name = "shardingTransactionManager")
 	@Primary
-	public PlatformTransactionManager annotationDrivenTransactionManager(@Qualifier(value = "shardingDataSource") DataSource shardingDataSource) {
+	public PlatformTransactionManager annotationDrivenTransactionManager(@Qualifier(value = "shardingDataSource")
+																					 DataSource shardingDataSource) {
 		return new DataSourceTransactionManager(shardingDataSource);
 	}
 }
